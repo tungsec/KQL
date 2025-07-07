@@ -1,0 +1,12 @@
+SecurityIncident
+| where Status == 'Closed' and Severity in ('Medium', 'High')
+| summarize arg_max(TimeGenerated, *) by IncidentNumber
+| where RelatedAnalyticRuleIds != "[]"
+| summarize
+    TotalIncidentsTriggered = count(),
+    TotalUndetermined = countif(Classification == "Undetermined"),
+    TotalBenignPositive = countif(Classification == "BenignPositive"),
+    TotalTruePositive = countif(Classification == "TruePositive"),
+    TotalFalsePositive = countif(Classification == "FalsePositive")
+    by Title
+| sort by TotalFalsePositive, TotalIncidentsTriggered

@@ -1,0 +1,10 @@
+DeviceInfo
+| where isnotempty(OSPlatform)
+    and SensorHealthState in ('Active', 'ActiveDefault')
+    and IsExcluded == false
+| where isnotempty(DeviceId) and isnotempty(DeviceName)
+| where OnboardingStatus == 'Onboarded'
+    and DeviceCategory == 'Endpoint'
+    and DeviceType != 'Mobile'
+| summarize Devices=count_distinct(DeviceName) by bin(TimeGenerated, (1d))
+| sort by TimeGenerated asc

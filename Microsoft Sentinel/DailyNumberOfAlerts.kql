@@ -1,0 +1,4 @@
+SecurityAlert
+| summarize Alerts=count_distinct(SystemAlertId) by bin(TimeGenerated, 1d)
+| sort by TimeGenerated asc
+

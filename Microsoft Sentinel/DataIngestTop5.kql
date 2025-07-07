@@ -1,0 +1,6 @@
+Usage
+| project DataType, Quantity
+| summarize IngestionVolumeGB=round((sum(Quantity) / 1000), 0) by DataType
+| order by IngestionVolumeGB desc
+| take 5
+

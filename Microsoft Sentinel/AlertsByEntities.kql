@@ -1,0 +1,18 @@
+SecurityIncident  
+| summarize arg_max(TimeGenerated, *) by IncidentNumber  
+| extend Alerts = extract("\\[(.*?)\\]", 1, tostring(AlertIds))  
+| mv-expand AlertIds to typeof(string)  
+| join   
+    (  
+    SecurityAlert  
+    | extend AlertEntities = parse_json(Entities)  
+    | mv-expand AlertEntities   
+    | where isnotempty(AlertEntities)  
+    )
+    on $left.AlertIds == $right.SystemAlertId  
+| project
+    IncidntName = Title,
+    IncidentNumber=IncidentNumber,
+    AlertName = AlertName,
+    AlertEntities
+

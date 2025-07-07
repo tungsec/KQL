@@ -1,0 +1,4 @@
+SecurityIncident
+| summarize Incidents=count_distinct(IncidentNumber) by bin(TimeGenerated, 1d)
+| sort by TimeGenerated asc
+
