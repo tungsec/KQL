@@ -1,0 +1,3363 @@
+union isfuzzy=true
+    (
+    OnePasswordEventLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '1Password'),
+    (
+    OnePasswordEventLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '1Password (using Azure Functions)'),
+    (
+    apifirewall_log_1_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'API Protection'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Darktrace"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] AI Analyst Darktrace via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Darktrace'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] AI Analyst Darktrace via AMA'),
+    (
+    AIShield_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'AIShield'),
+    (
+    Event
+    | where Source == "ALCWebCTRL"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Automated Logic WebCTRL '),
+    (
+    ARGOS_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'ARGOS Cloud Security'),
+    (
+    ABNORMAL_THREAT_MESSAGES_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'AbnormalSecurity '),
+    (
+    ABNORMAL_CASES_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'AbnormalSecurity '),
+    (
+    agari_bpalerts_log_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Agari Phishing Defense and Brand Protection'),
+    (
+    agari_apdtc_log_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Agari Phishing Defense and Brand Protection'),
+    (
+    agari_apdpolicy_log_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Agari Phishing Defense and Brand Protection'),
+    (
+    InfoSecAnalytics_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'InfoSecGlobal Data Connector'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Akamai"
+    | where DeviceProduct == "akamai_siem"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Akamai Security Events via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Akamai' 
+    | where DeviceProduct =~ 'akamai_siem'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Akamai Security Events via AMA'),
+    (
+    AliCloud_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'AliCloud'),
+    (
+    AlsidForADLog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Alsid for Active Directory'),
+    (
+    AWSCloudTrail
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Amazon Web Services'),
+    (
+    AWSGuardDuty
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Amazon Web Services S3'),
+    (
+    AWSVPCFlow
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Amazon Web Services S3'),
+    (
+    AWSCloudTrail
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Amazon Web Services S3'),
+    (
+    AWSCloudWatch
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Amazon Web Services S3'),
+    (
+    ApacheHTTPServer
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Apache HTTP Server'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Arista Networks"
+    | where DeviceProduct == "Awake Security"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Awake Security via Legacy Agent'),
+    (
+    Armorblox_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Armorblox'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Aruba Networks" and DeviceProduct == "ClearPass"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Aruba ClearPass via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Aruba Networks'
+    | where DeviceProduct =~ 'ClearPass'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Aruba ClearPass via AMA'),
+    (
+    Jira_Audit_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Atlassian Jira Audit'),
+    (
+    Auth0AM_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Auth0 Access Management'),
+    (
+    Authomize_v2_CL
+    | summarize TimeGenerated=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Authomize Data Connector'),
+    (
+    AzureActivity
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Activity'),
+    (
+    AzureDiagnostics
+    | where ResourceProvider == "MICROSOFT.BATCH"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Batch Account'),
+    (
+    fluentbit_CL
+    | extend TimeGenerated = todatetime(TimeGenerated)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure CloudNGFW By Palo Alto Networks'),
+    (
+    AzureDiagnostics
+    | where ResourceProvider == "MICROSOFT.SEARCH"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Cognitive Search'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "PUBLICIPADDRESSES"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure DDoS Protection'),
+    (
+    AzureDiagnostics
+    | where ResourceProvider == "MICROSOFT.DATALAKESTORE"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Data Lake Storage Gen1'),
+    (
+    AzureDiagnostics
+    | where ResourceProvider == "MICROSOFT.EVENTHUB"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Event Hub'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "AZUREFIREWALLS"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AZFWApplicationRule
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AZFWFlowTrace
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AZFWFatFlow
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AZFWNatRule
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AZFWDnsQuery
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AZFWIdpsSignature
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AZFWInternalFqdnResolutionFailure
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AZFWNetworkRule
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AZFWThreatIntel
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Firewall'),
+    (
+    AzureDiagnostics
+    | where ResourceProvider == "MICROSOFT.KEYVAULT"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Key Vault'),
+    (
+    AzureDiagnostics
+    | where ResourceProvider == "MICROSOFT.LOGIC"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Logic Apps'),
+    (
+    AzureDiagnostics
+    | where Category == "NetworkSecurityGroupEvent"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Network Security Groups'),
+    (
+    AzureDiagnostics
+    | where Category == "NetworkSecurityGroupRuleCounter"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Network Security Groups'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "SQLSecurityAuditEvents"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "SQLInsights"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "AutomaticTuning"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "QueryStoreWaitStatistics"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "Errors"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "DatabaseWaitStatistics"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "Timeouts"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "Blocks"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "Deadlocks"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "Basic"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "InstanceAndAppAdvanced"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "WorkloadManagement"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "SERVERS/DATABASES"
+    | where ResourceProvider == "MICROSOFT.SQL"
+    | where Category == "DevOpsOperationsAudit"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure SQL Databases'),
+    (
+    AzureDiagnostics
+    | where ResourceProvider == "MICROSOFT.SERVICEBUS"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Service Bus'),
+    (
+    AzureMetrics
+    | where ResourceProvider == "MICROSOFT.STORAGE"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Storage Account'),
+    (
+    StorageBlobLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Storage Account'),
+    (
+    StorageQueueLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Storage Account'),
+    (
+    StorageTableLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Storage Account'),
+    (
+    StorageFileLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Storage Account'),
+    (
+    AzureDiagnostics
+    | where ResourceProvider == "MICROSOFT.STREAMANALYTICS"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Stream Analytics'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "APPLICATIONGATEWAYS"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Web Application Firewall (WAF)'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "FRONTDOORS"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Web Application Firewall (WAF)'),
+    (
+    AzureDiagnostics
+    | where ResourceType == "CDNWEBAPPLICATIONFIREWALLPOLICIES"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Web Application Firewall (WAF)'),
+    (
+    AzureDiagnostics
+    | where Category == "kube-apiserver"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Kubernetes Service (AKS)'),
+    (
+    AzureDiagnostics
+    | where Category == "kube-audit"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Kubernetes Service (AKS)'),
+    (
+    AzureDiagnostics
+    | where Category == "kube-audit-admin"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Kubernetes Service (AKS)'),
+    (
+    AzureDiagnostics
+    | where Category == "kube-controller-manager"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Kubernetes Service (AKS)'),
+    (
+    AzureDiagnostics
+    | where Category == "kube-scheduler"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Kubernetes Service (AKS)'),
+    (
+    AzureDiagnostics
+    | where Category == "cluster-autoscaler"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Kubernetes Service (AKS)'),
+    (
+    AzureDiagnostics
+    | where Category == "guard"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Azure Kubernetes Service (AKS)'),
+    (
+    BetterMTDIncidentLog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'BETTER Mobile Threat Defense (MTD)'),
+    (
+    BetterMTDDeviceLog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'BETTER Mobile Threat Defense (MTD)'),
+    (
+    BetterMTDAppLog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'BETTER Mobile Threat Defense (MTD)'),
+    (
+    BetterMTDNetflowLog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'BETTER Mobile Threat Defense (MTD)'),
+    (
+    CGFWFirewallActivity
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Barracuda CloudGen Firewall'),
+    (
+    CommonSecurityLog​ 
+    | where DeviceVendor == "Barracuda"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Barracuda Web Application Firewall via Legacy Agent'),
+    (
+    barracuda_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Barracuda Web Application Firewall via Legacy Agent'),
+    (
+    beSECURE_ScanResults_CL 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Beyond Security beSECURE'),
+    (
+    beSECURE_ScanEvent_CL 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Beyond Security beSECURE'),
+    (
+    beSECURE_Audit_CL 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Beyond Security beSECURE'),
+    (
+    BitglassLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Bitglass'),
+    (
+    CylancePROTECT​
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Blackberry CylancePROTECT'),
+    (
+    BloodHoundLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'BloodHound Enterprise'),
+    (
+    BoxEvents_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Box'),
+    (
+    CommonSecurityLog​ 
+    | where DeviceVendor == "Symantec" and DeviceProduct == "DLP"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Broadcom Symantec DLP via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Symantec'
+    | where DeviceProduct =~ 'DLP'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Broadcom Symantec DLP via AMA'),
+    (
+    Syslog
+    | where SyslogMessage contains "gw-audit[-]:" or SyslogMessage contains "portal portal[-]:"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'CTERA Syslog'),
+    (
+    CiscoACIEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco Application Centric Infrastructure'),
+    (
+    CiscoETD_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco ETD'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Cisco"
+    | where DeviceProduct == "Firepower"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco Firepower eStreamer via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Cisco'
+    | where DeviceProduct =~ 'Firepower'
+    | where DeviceProduct =~ '"Firepower'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco Firepower eStreamer via AMA'),
+    (
+    CiscoISEEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco Identity Services Engine'),
+    (
+    Syslog
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco Software Defined WAN'),
+    (
+    CiscoSDWANNetflow_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco Software Defined WAN'),
+    (
+    StealthwatchEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco Secure Cloud Analytics'),
+    (
+    CiscoSecureEndpoint_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] Cisco Secure Endpoint (AMP)'),
+    (
+    CiscoUCS 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco UCS'),
+    (
+    CommonSecurityLog​ 
+    | where DeviceVendor =~ "Cisco"
+    | where DeviceProduct == "ASA"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco ASA via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Cisco"
+    | where DeviceProduct in ("ASA", "FTD")
+    | extend ingestion_time = bin(TimeGenerated, 1m)
+    | join kind=inner (
+        Heartbeat 
+        | where Category == "Azure Monitor Agent" 
+        | project TimeGenerated, _ResourceId
+        | summarize by _ResourceId, ingestion_time = bin(TimeGenerated, 1m))
+        on _ResourceId, ingestion_time
+    | project-away _ResourceId1, ingestion_time, ingestion_time1 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco ASA/FTD via AMA (Preview)'),
+    (
+    CiscoDuo_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco Duo Security'),
+    (
+    CiscoMeraki 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco Meraki'),
+    (
+    CiscoSEGEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco Secure Email Gateway via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Cisco'
+    | where DeviceProduct =~ 'ESA_CONSOLIDATED_LOG_EVENT'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco Secure Email Gateway via AMA'),
+    (
+    Cisco_Umbrella_dns_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco Umbrella'),
+    (
+    Cisco_Umbrella_proxy_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco Umbrella'),
+    (
+    Cisco_Umbrella_ip_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco Umbrella'),
+    (
+    Cisco_Umbrella_cloudfirewall_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cisco Umbrella'),
+    (
+    CiscoWSAEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Cisco Web Security Appliance'),
+    (
+    CitrixADCEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Citrix ADC (former NetScaler)'),
+    (
+    CitrixAnalytics_indicatorSummary_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'CITRIX SECURITY ANALYTICS'),
+    (
+    CitrixAnalytics_indicatorEventDetails_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'CITRIX SECURITY ANALYTICS'),
+    (
+    CitrixAnalytics_riskScoreChange_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'CITRIX SECURITY ANALYTICS'),
+    (
+    CitrixAnalytics_userProfile_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'CITRIX SECURITY ANALYTICS'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Citrix"
+    | where DeviceProduct == "NetScaler"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Citrix WAF (Web App Firewall) via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Citrix'
+    | where DeviceProduct =~ 'NetScaler'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Citrix WAF (Web App Firewall) via AMA'),
+    (
+    ClarotyEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Claroty via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Claroty'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Claroty via AMA'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor in ("Medigate", "Claroty")
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Claroty xDome'),
+    (
+    Cloudflare_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cloudflare (Preview)'),
+    (
+    CognniIncidents_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cognni'),
+    (
+    ThreatIntelligenceIndicator
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Luminar IOCs and Leaked Credentials'),
+    (
+    CommonSecurityLog
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Common Event Format (CEF) via AMA'),
+    (
+    CommonSecurityLog​ 
+    | where DeviceVendor !in ("Cisco", "Check Point", "Palo Alto Networks", "Fortinet", "F5", "Barracuda", "ExtraHop", "OneIdentity", "Zscaler", "ForgeRock Inc", "Cyber-Ark", "illusive", "Vectra Networks", "Citrix", "Darktrace", "Akamai", "Aruba Networks", "CrowdStrike", "Symantec", "Claroty", "Contrast Security", "Delinea Software", "Thycotic Software", "FireEye", "Forcepoint CSG", "Forcepoint", "Forcepoint CASB", "iboss", "Illumio", "Imperva Inc.", "Infoblox", "Morphisec", "Netwrix", "Nozomi", "Onapsis", "OSSEC", "PingFederate", "RidgeSecurity", "SonicWall", "Trend Micro", "vArmour", "Votiro")
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Common Event Format (CEF)'),
+    (
+    CommvaultSecurityIQ_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'CommvaultSecurityIQ'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Contrast Security"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Contrast Protect via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Contrast Security'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Contrast Protect via AMA'),
+    (
+    ContrastADR_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'ContrastADR'),
+    (
+    Corelight_v2_bacnet_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_capture_loss_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_cip_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_conn_long_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_conn_red_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_conn_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_corelight_burst_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_corelight_overall_capture_loss_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_corelight_profiling_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_datared_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_dce_rpc_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_dga_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_dhcp_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_dnp3_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_dns_red_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_dns_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_dpd_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_encrypted_dns_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_enip_debug_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_enip_list_identity_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_enip_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_etc_viz_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_files_red_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_files_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_ftp_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_generic_dns_tunnels_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_generic_icmp_tunnels_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_http2_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_http_red_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_http_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_icmp_specific_tunnels_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_intel_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_ipsec_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_irc_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_iso_cotp_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_kerberos_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_known_certs_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_known_devices_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_known_domains_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_known_hosts_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_known_names_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_known_remotes_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_known_services_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_known_users_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_local_subnets_dj_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_local_subnets_graphs_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_local_subnets_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_log4shell_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_modbus_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_mqtt_connect_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_mqtt_publish_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_mqtt_subscribe_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_mysql_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_notice_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_ntlm_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_ntp_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_ocsp_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_openflow_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_packet_filter_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_pe_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_profinet_dce_rpc_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_profinet_debug_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_profinet_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_radius_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_rdp_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_reporter_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_rfb_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_s7comm_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_signatures_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_sip_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_smartpcap_stats_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_smartpcap_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_smb_files_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_smb_mapping_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_smtp_links_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_smtp_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_snmp_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_socks_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_software_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_specific_dns_tunnels_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_ssh_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_ssl_red_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_ssl_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_stats_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_stepping_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_stun_nat_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_stun_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_suricata_corelight_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_suricata_eve_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_suricata_stats_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_suricata_zeek_stats_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_syslog_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_tds_rpc_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_tds_sql_batch_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_tds_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_traceroute_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_tunnel_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_unknown_smartpcap_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_util_stats_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_vpn_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_weird_red_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_weird_stats_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_weird_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_wireguard_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_x509_red_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_x509_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    Corelight_v2_zeek_doctor_CL
+    | summarize Time=max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Corelight Connector Exporter'),
+    (
+    CortexXDR_Incidents_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cortex XDR - Incidents'),
+    (
+    CriblAccess_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cribl'),
+    (
+    CriblAudit_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cribl'),
+    (
+    CriblUIAccess_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cribl'),
+    (
+    CriblInternal_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cribl'),
+    (
+    CommonSecurityLog 
+    | where DeviceVendor == "CrowdStrike" and DeviceProduct == "FalconHost"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] CrowdStrike Falcon Endpoint Protection via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'CrowdStrike'
+    | where DeviceProduct =~ 'FalconHost'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] CrowdStrike Falcon Endpoint Protection via AMA'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Cyber-Ark"
+    | where DeviceProduct == "Vault"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] CyberArk Enterprise Password Vault (EPV) Events via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Cyber-Ark'
+    | where DeviceProduct =~ 'Vault'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] CyberArk Privilege Access Manager (PAM) Events via AMA'),
+    (
+    CyberArk_AuditEvents_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'CyberArkAudit'),
+    (
+    CyberArkEPM_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'CyberArkEPM'),
+    (
+    CyberSixgill_Alerts_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cybersixgill Actionable Alerts'),
+    (
+    SecurityEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cyborg Security HUNTER Hunt Packages'),
+    (
+    CynerioEvent_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Cynerio Security Events'),
+    (ThreatIntelligenceIndicator
+    | where isnotempty(TimeGenerated) and SourceSystem == 'Datalake - OrangeCyberdefense'
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Datalake2Sentinel'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Delinea Software" or DeviceVendor == "Thycotic Software"
+    | where DeviceProduct == "Secret Server"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Delinea Secret Server via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Delinea Software' or DeviceVendor =~ 'Thycotic Software' 
+    | where DeviceProduct =~ 'Secret Server'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Delinea Secret Server via AMA'),
+    (
+    DigitalGuardianDLPEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Digital Guardian Data Loss Prevention'),
+    (
+    DoppelTable_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Doppel Data Connector'),
+    (
+    Dynamics365Activity
+    | where OfficeWorkload == "CRM"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Dynamics 365'),
+    (
+    DynatraceAttacks_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Dynatrace Attacks'),
+    (
+    DynatraceAuditLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Dynatrace Audit Logs'),
+    (
+    DynatraceProblems_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Dynatrace Problems'),
+    (
+    DynatraceSecurityProblems_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Dynatrace Runtime Vulnerabilities'),
+    (
+    ESETInspect_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'ESET Inspect'),
+    (
+    IntegrationTable_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'ESET Protect Platform'),
+    (
+    ESETPROTECT
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] ESET PROTECT'),
+    (
+    EgressDefend_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Egress Defend'),
+    (
+    EgressEvents_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Egress Iris Connector'),
+    (
+    ElasticAgentEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Elastic Agent'),
+    (
+    eset_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Eset Security Management Center'),
+    (
+    ExabeamEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Exabeam Advanced Analytics'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "ExtraHop"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] ExtraHop Reveal(x) via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'ExtraHop'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] ExtraHop Reveal(x) via AMA'),
+    (
+    F5Telemetry_LTM_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'F5 BIG-IP'),
+    (
+    F5Telemetry_system_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'F5 BIG-IP'),
+    (
+    F5Telemetry_ASM_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'F5 BIG-IP'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "F5"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] F5 Networks via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'F5'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] F5 Networks via AMA'),
+    (
+    feedly_indicators_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Feedly'),
+    (
+    FireEyeNXEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] FireEye Network Security (NX) via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'FireEye'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] FireEye Network Security (NX) via AMA'),
+    (
+    Firework_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Flare'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Forcepoint CASB"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Forcepoint CASB via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Forcepoint CASB'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Forcepoint CASB via AMA'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Forcepoint CSG"
+    | where DeviceProduct == "Web"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Forcepoint CSG via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Forcepoint CSG"
+    | where DeviceProduct == "Email"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Forcepoint CSG via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Forcepoint CSG'
+    | where DeviceProduct =~ 'Web'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Forcepoint CSG via AMA'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Forcepoint CSG'
+    | where DeviceProduct =~ 'Email'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Forcepoint CSG via AMA'),
+    (
+    ForcepointDLPEvents_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Forcepoint DLP'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Forcepoint"
+    | where DeviceProduct == "NGFW"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Forcepoint NGFW via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Forcepoint'
+    | where DeviceProduct =~ 'NGFW'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Forcepoint NGFW via AMA'),
+    (
+    ForescoutEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Forescout'),
+    (
+    ForescoutHostProperties_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Forescout Host Property Monitor'),
+    (
+    ForescoutPolicyStatus_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Forescout Host Property Monitor'),
+    (
+    ForescoutComplianceStatus_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Forescout Host Property Monitor'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "ForgeRock Inc"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] ForgeRock Identity Platform'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Fortinet"
+    | where DeviceProduct startswith "Fortigate"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Fortinet via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Fortinet'
+    | where DeviceProduct =~ 'Fortigate'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Fortinet via AMA'),
+    (
+    FncEventsSuricata_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Fortinet FortiNDR Cloud'),
+    (
+    FncEventsObservation_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Fortinet FortiNDR Cloud'),
+    (
+    FncEventsDetections_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Fortinet FortiNDR Cloud'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Fortinet"
+    | where DeviceProduct == "Fortiweb"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Fortinet FortiWeb Web Application Firewall via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where (DeviceVendor contains 'Fortinet' and DeviceProduct contains 'Fortiweb') or Computer contains 'Fortiweb' 
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Fortinet FortiWeb Web Application Firewall via AMA'),
+    (
+    Gigamon_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Gigamon AMX Data Connector'),
+    (
+    GitHubAuditData
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'GitHub Enterprise Audit Log'),
+    (
+    GitLabAccess
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] GitLab'),
+    (
+    GitLabAudit
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] GitLab'),
+    (
+    GitLabApp
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] GitLab'),
+    (
+    ApigeeX_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] Google ApigeeX'),
+    (
+    GCP_MONITORING_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Google Cloud Platform Cloud Monitoring'),
+    (
+    GoogleCloudSCC
+    | where TimeGenerated > ago(12h)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Google Security Command Center'),
+    (
+    GCP_DNS_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] Google Cloud Platform DNS'),
+    (
+    GCP_IAM_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] Google Cloud Platform IAM'),
+    (
+    GWorkspace_ReportsAPI_admin_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Google Workspace (G Suite)'),
+    (
+    GWorkspace_ReportsAPI_calendar_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Google Workspace (G Suite)'),
+    (
+    GWorkspace_ReportsAPI_drive_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Google Workspace (G Suite)'),
+    (
+    GWorkspace_ReportsAPI_login_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Google Workspace (G Suite)'),
+    (
+    GWorkspace_ReportsAPI_mobile_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Google Workspace (G Suite)'),
+    (
+    GWorkspace_ReportsAPI_token_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Google Workspace (G Suite)'),
+    (
+    GWorkspace_ReportsAPI_user_accounts_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Google Workspace (G Suite)'),
+    (ThreatIntelligenceIndicator
+    | where isnotempty(TimeGenerated) and SourceSystem == 'GreyNoise'
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'GreyNoise Threat Intelligence'),
+    (
+    HYASProtectDnsSecurityLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'HYAS Protect'),
+    (
+    net_assets_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Holm Security Asset Data'),
+    (
+    web_assets_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Holm Security Asset Data'),
+    (
+    CyberpionActionItems_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'IONIX Security Logs'),
+    (
+    ISCBind 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] ISC Bind'),
+    (
+    IllumioCoreEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Illumio Core via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Illumio'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Illumio Core via AMA'),
+    (
+    Illumio_Auditable_Events_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Illumio SaaS'),
+    (
+    Illumio_Flow_Events_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Illumio SaaS'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "illusive"
+    | where DeviceProduct == "illusive"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Illusive Platform via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'illusive'
+    | where DeviceProduct =~ 'illusive'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Illusive Platform via AMA'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Imperva Inc."
+    | where DeviceProduct == "WAF Gateway"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Imperva WAF Gateway'),
+    (
+    ImpervaWAFCloud_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Imperva Cloud WAF'),
+    (
+    InfobloxCDC
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Infoblox Cloud Data Connector via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Infoblox'
+    | where DeviceProduct =~ 'Data Connector'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Infoblox Cloud Data Connector via AMA'),
+    (
+    Infoblox 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Infoblox NIOS'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ "Infoblox"
+        and DeviceProduct =~ "Data Connector"
+        and DeviceEventClassID =~ "BloxOne-InsightsNotification-Log"
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Infoblox SOC Insight Data Connector via AMA'),
+    (
+    InfobloxInsight_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Infoblox SOC Insight Data Connector via REST API'),
+    (
+    InfobloxCDC_SOCInsights
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Infoblox SOC Insight Data Connector via Legacy Agent'),
+    (
+    atlassian_beacon_alerts_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Atlassian Beacon Alerts'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "IronNet"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'IronNet IronDefense'),
+    (
+    Island_Admin_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Island Enterprise Browser Admin Audit (Polling CCP)'),
+    (
+    Island_User_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Island Enterprise Browser User Activity (Polling CCP)'),
+    (
+    IvantiUEMEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Ivanti Unified Endpoint Management'),
+    (
+    JBossEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] JBoss Enterprise Application Platform'),
+    (
+    JuniperSRX 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Juniper SRX'),
+    (
+    JuniperIDP
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Juniper IDP'),
+    (
+    LastPassNativePoller_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'LastPass Enterprise - Reporting (Polling CCP)'),
+    (
+    Lookout_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Lookout (using Azure Function)'),
+    (ThreatIntelligenceIndicator
+    | where isnotempty(TimeGenerated) and SourceSystem == 'MISP'
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'MISP2Sentinel'),
+    (
+    MailGuard365_Threats_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'MailGuard 365'),
+    (
+    MailRiskEmails_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'MailRisk by Secure Practice'),
+    (
+    MarkLogicAudit_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] MarkLogic Audit'),
+    (
+    McAfeeNSPEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] McAfee Network Security Platform'),
+    (
+    McAfeeEPOEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] McAfee ePolicy Orchestrator (ePO)'),
+    (
+    OfficeActivity
+    | where OfficeWorkload == "SharePoint" or OfficeWorkload == "OneDrive"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft 365 (formerly, Office 365)'),
+    (
+    OfficeActivity
+    | where OfficeWorkload == "Exchange"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft 365 (formerly, Office 365)'),
+    (
+    OfficeActivity
+    | where OfficeWorkload == "MicrosoftTeams"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft 365 (formerly, Office 365)'),
+    (
+    SecurityAlert
+    | where ProductName == "Azure Advanced Threat Protection"
+    | extend alertWasCustomized = bag_has_key(todynamic(ExtendedProperties), "OriginalProductName")
+    | where alertWasCustomized == false
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender for Identity'),
+    (
+    SecurityIncident 
+    | where ProviderName == "Microsoft 365 Defender"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    SecurityAlert 
+    | where ProductName in("Microsoft Defender Advanced Threat Protection", "Office 365 Advanced Threat Protection", "Azure Advanced Threat Protection", "Microsoft Cloud App Security", "Microsoft 365 Defender")
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceFileEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceImageLoadEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceInfo
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceLogonEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceNetworkEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceNetworkInfo
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceProcessEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceRegistryEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    DeviceFileCertificateInfo
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    EmailEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    EmailUrlInfo
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    EmailAttachmentInfo
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    EmailPostDeliveryEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    UrlClickEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    IdentityLogonEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    IdentityQueryEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    IdentityDirectoryEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    CloudAppEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    AlertEvidence
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender XDR'),
+    (
+    SecurityAlert
+    | where ProductName == "Azure Security Center"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Subscription-based Microsoft Defender for Cloud (Legacy)'),
+    (
+    SecurityAlert
+    | where ProductName == "Azure Security Center"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Tenant-based Microsoft Defender for Cloud'),
+    (
+    SecurityAlert
+    | where ProductName == "Microsoft Cloud App Security"​
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender for Cloud Apps'),
+    (
+    McasShadowItReporting​
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender for Cloud Apps'),
+    (
+    SecurityAlert
+    | where ProviderName == "OATP"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender for Office 365 (Preview)'),
+    (
+    SigninLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    AuditLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    AADNonInteractiveUserSignInLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    AADServicePrincipalSignInLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    AADManagedIdentitySignInLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    AADProvisioningLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    ADFSSignInLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    AADUserRiskEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    AADRiskyUsers
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    NetworkAccessTraffic
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    AADRiskyServicePrincipals
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    AADServicePrincipalRiskEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID'),
+    (
+    SecurityAlert
+    | where ProductName == "Azure Active Directory Identity Protection"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Entra ID Protection'),
+    (
+    Event
+    | where EventLog in ('MSExchange Management', 'Application', 'System')
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Microsoft Exchange Logs and Events'),
+    (
+    W3CIISLog
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Microsoft Exchange Logs and Events'),
+    (
+    MessageTrackingLog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Microsoft Exchange Logs and Events'),
+    (
+    ExchangeHttpProxy_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Microsoft Exchange Logs and Events'),
+    (
+    ESIExchangeConfig_CL
+    | summarize Time = max(todatetime(EntryDate_s)) by GenerationInstanceID_g, ESIEnvironment_s
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | summarize Time = max(Time)
+    | project Time
+    | extend Connector = 'Exchange Security Insights On-Premises Collector'),
+    (
+    Event
+    | where EventLog == 'MSExchange Management'
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Exchange Admin Audit Logs by Event Logs'),
+    (
+    Event
+    | where EventLog == 'Application'
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Exchange Logs and Events'),
+    (
+    SecurityEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = ' Microsoft Active-Directory Domain Controllers Security Event Logs'),
+    (
+    W3CIISLog
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'IIS Logs of Microsoft Exchange Servers'),
+    (
+    MessageTrackingLog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Exchange Message Tracking Logs'),
+    (
+    ExchangeHttpProxy_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Exchange HTTP Proxy Logs'),
+    (
+    ESIExchangeOnlineConfig_CL
+    | summarize Time = max(todatetime(EntryDate_s)) by GenerationInstanceID_g, ESIEnvironment_s
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | summarize Time = max(Time)
+    | project Time
+    | extend Connector = 'Exchange Security Insights Online Collector'),
+    (
+    PowerBIActivity
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft PowerBI'),
+    (
+    ProjectActivity
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Project'),
+    (
+    PurviewDataSensitivityLogs
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Purview'),
+    (
+    MicrosoftPurviewInformationProtection
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Purview Information Protection'),
+    (
+    Syslog
+    | where ProcessName == 'sysmon'
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Microsoft Sysmon For Linux'),
+    (
+    SecurityAlert
+    | where ProviderName == "MDATP"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender for Endpoint'),
+    (
+    SecurityAlert
+    | where ProductName == "Microsoft 365 Insider Risk Management"
+    | extend alertWasCustomized = bag_has_key(todynamic(ExtendedProperties), "OriginalProductName")
+    | where alertWasCustomized == false
+    | extend alertWasCustomized = bag_has_key(todynamic(ExtendedProperties), "OriginalProductName")
+    | where alertWasCustomized == false
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft 365 Insider Risk Management'),
+    (
+    MimecastAudit_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Mimecast Audit & Authentication'),
+    (
+    MimecastSIEM_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Mimecast Secure Email Gateway'),
+    (
+    MimecastDLP_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Mimecast Secure Email Gateway'),
+    (
+    MimecastTTPUrl_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Mimecast Targeted Threat Protection'),
+    (
+    MimecastTTPAttachment_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Mimecast Targeted Threat Protection'),
+    (
+    MimecastTTPImpersonation_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Mimecast Targeted Threat Protection'),
+    (
+    MongoDBAudit_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] MongoDB Audit'),
+    (
+    Morphisec
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Morphisec UTPP via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Morphisec'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Morphisec UTPP via AMA'),
+    (
+    MuleSoft_Cloudhub_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'MuleSoft Cloudhub'),
+    (
+    NGINXHTTPServer
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] NGINX HTTP Server'),
+    (
+    BSMmacOS_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'NXLog BSM macOS'),
+    (
+    NXLogFIM_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'NXLog FIM'),
+    (
+    LinuxAudit_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'NXLog LinuxAudit'),
+    (
+    NXLog_parsed_AIX_Audit_view
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'NXLog AIX Audit'),
+    (
+    ASimDnsMicrosoftNXLog
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'NXLog DNS Logs'),
+    (
+    Syslog
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Nasuni Edge Appliance'),
+    (
+    Netclean_Incidents_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Netclean ProActive Incidents'),
+    (
+    NetwrixAuditor
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Netwrix Auditor via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Netwrix'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Netwrix Auditor via AMA'),
+    (
+    NonameAPISecurityAlert_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Noname Security for Microsoft Sentinel'),
+    (
+    NordPassEventLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'NordPass'),
+    (
+    NordPassEventLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'NordPass (using Azure Functions)'),
+    (
+    NozomiNetworksEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Nozomi Networks N2OS via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor has 'Nozomi'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Nozomi Networks N2OS via AMA'),
+    (
+    OSSECEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] OSSEC via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'OSSEC'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] OSSEC via AMA'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Onapsis"
+    | where DeviceProduct == "OSP"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Onapsis Platform'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "OneIdentity" and DeviceProduct == "SPS"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'One Identity Safeguard'),
+    (
+    OneLogin_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] OneLogin IAM Platform'),
+    (
+    OpenVpnEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] OpenVPN Server'),
+    (
+    OCI_Logs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Oracle Cloud Infrastructure'),
+    (
+    OracleDatabaseAuditEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Oracle Database Audit'),
+    (
+    OracleWebLogicServerEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Oracle WebLogic Server'),
+    (
+    OrcaAlerts_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Orca Security Alerts'),
+    (
+    PDNSBlockData_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'PDNS Block Data Connector'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Palo Alto Networks"
+    | where DeviceProduct == "Cortex XDR"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Palo Alto Networks Cortex XDR'),
+    (
+    PrismaCloudCompute_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Palo Alto Prisma Cloud CWPP (using REST API)'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Palo Alto Networks"
+    | where DeviceProduct has "PAN-OS"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Palo Alto Networks (Firewall) via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Palo Alto Networks' 
+    | where DeviceProduct has 'PAN-OS'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Palo Alto Networks (Firewall) via AMA'),
+    (
+    PaloAltoCDLEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Palo Alto Networks Cortex Data Lake (CDL) via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Palo Alto Networks'
+    | where DeviceProduct =~ 'LF'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Palo Alto Networks Cortex Data Lake (CDL) via AMA'),
+    (
+    PaloAltoPrismaCloudAlert_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Palo Alto Prisma Cloud CSPM'),
+    (
+    PaloAltoPrismaCloudAudit_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Palo Alto Prisma Cloud CSPM'),
+    (
+    Perimeter81_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Perimeter 81 Activity Logs'),
+    (
+    Phosphorus_CL 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Phosphorus Devices'),
+    (
+    PingFederateEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] PingFederate via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceProduct has 'PingFederate'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] PingFederate via AMA'),
+    (
+    PostgreSQLEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] PostgreSQL Events'),
+    (
+    prancer_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Prancer Data Connector'),
+    (
+    ProofPointTAPClicksPermitted_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Proofpoint TAP'),
+    (
+    ProofPointTAPClicksBlocked_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Proofpoint TAP'),
+    (
+    ProofPointTAPMessagesDelivered_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Proofpoint TAP'),
+    (
+    ProofPointTAPMessagesBlocked_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Proofpoint TAP'),
+    (
+    ProofpointPOD_message_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Proofpoint On Demand Email Security'),
+    (
+    ProofpointPOD_maillog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Proofpoint On Demand Email Security'),
+    (
+    PulseConnectSecure
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Pulse Connect Secure'),
+    (
+    QualysKB_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Qualys VM KnowledgeBase'),
+    (
+    QualysHostDetectionV2_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] Qualys Vulnerability Management'),
+    (
+    QualysHostDetection_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] Qualys Vulnerability Management'),
+    (
+    RSASecurIDAMEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] RSA® SecurID (Authentication Manager)'),
+    (
+    CommonSecurityLog
+    | where DeviceProduct =~ "iSID"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Radiflow iSID via AMA'),
+    (
+    NexposeInsightVMCloud_assets_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Rapid7 Insight Platform Vulnerability Management Reports'),
+    (
+    NexposeInsightVMCloud_vulnerabilities_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Rapid7 Insight Platform Vulnerability Management Reports'),
+    (
+    RedCanaryDetections_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Red Canary Threat Detection'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "RidgeSecurity"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] RIDGEBOT - data connector for Microsoft Sentinel'),
+    (
+    SAPLogServ_CL
+    | where TimeGenerated > ago(12h)
+    | where name_s == "no data test"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'SAP LogServ (RISE), S/4HANA Cloud private edition'),
+    (
+    SecurityIncident
+    | where Labels contains "SIGNL4"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Derdack SIGNL4'),
+    (
+    SINECSecurityGuard_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'SINEC Security Guard'),
+    (
+    SailPointIDN_Events_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'SailPoint IdentityNow'),
+    (
+    SailPointIDN_Events_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'SailPoint IdentityNow'),
+    (
+    SalesforceServiceCloud_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] Salesforce Service Cloud'),
+    (
+    Samsung_Knox_Application_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Samsung Knox Asset Intelligence (Preview)'),
+    (
+    Samsung_Knox_Audit_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Samsung Knox Asset Intelligence (Preview)'),
+    (
+    Samsung_Knox_Process_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Samsung Knox Asset Intelligence (Preview)'),
+    (
+    Samsung_Knox_Network_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Samsung Knox Asset Intelligence (Preview)'),
+    (
+    Samsung_Knox_User_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Samsung Knox Asset Intelligence (Preview)'),
+    (
+    Samsung_Knox_System_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Samsung Knox Asset Intelligence (Preview)'),
+    (
+    SecurityBridgeLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] SecurityBridge Threat Detection for SAP'),
+    (
+    dsp_parser
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Semperis Directory Services Protector'),
+    (
+    SenservaPro_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'SenservaPro (Preview)'),
+    (
+    SentinelOne_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'SentinelOne'),
+    (
+    SeraphicWebSecurity_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Seraphic Web Security'),
+    (
+    Sevco_Devices_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Sevco Platform - Devices'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Silverfort"
+    | where DeviceProduct == "Admin Console"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Silverfort Admin Console'),
+    (
+    SlackAudit_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] Slack Audit'),
+    (AzureDiagnostics
+    | where Resource == 'SlashnextFunctionApp'
+    | summarize LastDataReceived = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'SlashNext Function App'),
+    (
+    Snowflake_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[DEPRECATED] Snowflake'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "SonicWall"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] SonicWall Firewall via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'SonicWall'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] SonicWall Firewall via AMA'),
+    (
+    Sonrai_Tickets_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Sonrai Data Connector'),
+    (
+    SophosCloudOptix_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Sophos Cloud Optix'),
+    (
+    SophosEP_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Sophos Endpoint Protection'),
+    (
+    SophosXGFirewall 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Sophos XG Firewall'),
+    (
+    secRMM_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Squadra Technologies secRMM'),
+    (
+    SquidProxy 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Squid Proxy'),
+    (
+    SymantecEndpointProtection 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Symantec Endpoint Protection'),
+    (
+    SymantecICDx_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Symantec Integrated Cyber Defense Exchange'),
+    (
+    SymantecVIP 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Symantec VIP'),
+    (
+    SymantecProxySG 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Symantec ProxySG'),
+    (
+    Syslog
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Syslog via Legacy Agent'),
+    (
+    Syslog
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Syslog via AMA'),
+    (
+    Talon_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Talon Insights'),
+    (
+    Tenable_ad_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Tenable.ad'),
+    (
+    Tenable_IO_Assets_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Tenable.io Vulnerability Management'),
+    (
+    Tenable_IO_Vuln_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Tenable.io Vulnerability Management'),
+    (
+    TheHive_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'TheHive Project - TheHive'),
+    (
+    TheomAlerts_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Theom'),
+    (
+    ThreatIntelligenceIndicator 
+    | where SourceSystem in ("Microsoft Defender Threat Intelligence", "Microsoft Emerging Threat Feed")
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Microsoft Defender Threat Intelligence'),
+    (
+    ThreatIntelligenceIndicator 
+    | where SourceSystem == "Premium Microsoft Defender Threat Intelligence"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Premium Microsoft Defender Threat Intelligence'),
+    (
+    ThreatIntelligenceIndicator
+    | where SourceSystem == "SecurityGraph"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Threat Intelligence Platforms'),
+    (
+    ThreatIntelligenceIndicator
+    | where SourceSystem !in ("SecurityGraph", "Azure Sentinel", "Microsoft Sentinel") 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Threat intelligence - TAXII'),
+    (ThreatIntelligenceIndicator
+    | where isnotempty(TimeGenerated) and SourceSystem !in ('SecurityGraph', 'Azure Sentinel', 'Microsoft Sentinel')
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Threat Intelligence Upload API (Preview)'),
+    (ThreatIntelligenceIndicator
+    | where isnotempty(TimeGenerated) and SourceSystem !in ('SecurityGraph', 'Azure Sentinel', 'Microsoft Sentinel')
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Threat Intelligence Upload API (Preview)'),
+    (
+    TomcatEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Apache Tomcat'),
+    (
+    TransmitSecurityActivity_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Transmit Security Connector'),
+    (
+    TMApexOneEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Trend Micro Apex One via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Trend Micro'
+    | where DeviceProduct =~ 'Apex Central'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Trend Micro Apex One via AMA'),
+    (
+    TrendMicroCAS_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Trend Micro Cloud App Security'),
+    (
+    TrendMicroDeepSecurity
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Trend Micro Deep Security via Legacy'),
+    (
+    TrendMicroTippingPoint
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Trend Micro TippingPoint via Legacy'),
+    (
+    TrendMicro_XDR_WORKBENCH_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Trend Vision One'),
+    (
+    TrendMicro_XDR_RCA_Task_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Trend Vision One'),
+    (
+    TrendMicro_XDR_RCA_Result_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Trend Vision One'),
+    (
+    TrendMicro_XDR_OAT_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Trend Vision One'),
+    (
+    UbiquitiAuditEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Ubiquiti UniFi'),
+    (
+    VMwareESXi 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] VMware ESXi'),
+    (
+    CarbonBlackEvents_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'VMware Carbon Black Cloud'),
+    (
+    CarbonBlackAuditLogs_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'VMware Carbon Black Cloud'),
+    (
+    CarbonBlackNotifications_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'VMware Carbon Black Cloud'),
+    (
+    vCenter 
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] VMware vCenter'),
+    (
+    ValenceAlert_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'SaaS Security'),
+    (
+    VaronisAlerts_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Varonis SaaS'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Vectra Networks"
+    | where DeviceProduct == "X Series"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Vectra AI Detect via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Vectra Networks' 
+    | where DeviceProduct =~ 'X Series'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Vectra AI Detect via AMA'),
+    (
+    VectraStream
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'AI Vectra Stream via Legacy Agent'),
+    (
+    vectra_isession
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_dns
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_ssl
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_beacon
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_dcerpc
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_dhcp
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_http
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_kerberos
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_ldap
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_ntlm
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_radius
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_rdp
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_smbfiles
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_smbmapping
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_smtp
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_ssh
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    vectra_x509
+    | summarize Time = max(TimeGenerated)
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Recommended] Vectra AI Stream via AMA'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Votiro" and DeviceProduct == "Votiro cloud"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Votiro Sanitization Engine Logs'),
+    (
+    WatchGuardFirebox
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] WatchGuard Firebox'),
+    (
+    WindowsFirewall
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Windows Firewall'),
+    (
+    ASimNetworkSessionLogs
+    | where EventProduct == "Windows Firewall"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Windows Firewall Events via AMA'),
+    (
+    WindowsEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Windows Forwarded Events'),
+    (
+    SecurityEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Security Events via Legacy Agent'),
+    (
+    SecurityEvent
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Windows Security Events via AMA'),
+    (
+    ASimDnsActivityLogs
+    | where EventProduct == "DNS Server"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Windows DNS Events via AMA'),
+    (
+    DnsEvents
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'DNS'),
+    (
+    DnsInventory
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'DNS'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "WireX"
+    | where DeviceProduct == "WireX NFP"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] WireX Network Forensics Platform via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'WireX'
+    | where DeviceProduct =~ 'WireX NFP'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] WireX Network Forensics Platform via AMA'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "WithSecure™"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] WithSecure Elements via Connector'),
+    (
+    WsSecurityEvents_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'WithSecure Elements API (Azure Function)'),
+    (
+    union isfuzzy=true 
+        (WizIssues_CL),
+        (WizIssuesV2_CL)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Wiz'),
+    (
+    union isfuzzy=true 
+        (WizVulnerabilities_CL),
+        (WizVulnerabilitiesV2_CL)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Wiz'),
+    (
+    union isfuzzy=true 
+        (WizAuditLogs_CL),
+        (WizAuditLogsV2_CL)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Wiz'),
+    (
+    ZimperiumThreatLog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Zimperium Mobile Threat Defense'),
+    (
+    ZimperiumMitigationLog_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Zimperium Mobile Threat Defense'),
+    (
+    Zoom_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'Zoom Reports'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "Zscaler"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Zscaler via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'Zscaler'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Zscaler via AMA'),
+    (
+    ZPA_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] Zscaler Private Access'),
+    (
+    NCProtectUAL_CL
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'NC Protect'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'iboss' and AdditionalExtensions !contains 'amaExternalLogService=true'
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] iboss via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'iboss' and AdditionalExtensions contains 'amaExternalLogService=true'
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = 'iboss via AMA'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor == "vArmour"
+    | where DeviceProduct == "AC"
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] vArmour Application Controller via Legacy Agent'),
+    (
+    CommonSecurityLog
+    | where DeviceVendor =~ 'vArmour'
+    | where DeviceProduct =~ 'AC'
+    | extend sent_by_ama = column_ifexists('CollectorHostName', '')
+    | where isnotempty(sent_by_ama)
+    | summarize LastLogReceived = max(TimeGenerated) by Type
+    | project IsConnected = LastLogReceived > ago(7d), LastLogReceived, TableName = Type
+    | extend Connector = '[Deprecated] vArmour Application Controller via AMA')
+
