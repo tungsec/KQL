@@ -1,0 +1,12 @@
+SentinelHealth
+| where OperationName in ("Automation rule run", "Playbook was triggered")
+| where Status != 'Success'
+| extend TriggeredPlaybooks = tostring(ExtendedProperties.TriggeredPlaybooks)
+| extend ParsedPlaybook = parse_json(TriggeredPlaybooks)
+| extend PlaybookName = case(
+    isnull(ParsedPlaybook), "N/A",
+    array_length(ParsedPlaybook) == 0, "N/A",
+    isnull(ParsedPlaybook[0].WorkflowId), "N/A",
+    extract("workflows/([^/]+)", 1, tostring(ParsedPlaybook[0].WorkflowId))
+)
+| project TimeGenerated, AutomationRuleName = SentinelResourceName, PlaybookName, Status, Description

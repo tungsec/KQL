@@ -1,0 +1,8 @@
+SecurityEvent
+| summarize Count = count(), SizeGB = round(sum(_BilledSize) / 1024 / 1024 / 1024, 2) by EventID
+| top 10 by SizeGB desc
+| project
+    ['Event ID'] = EventID,
+    ['Event Count'] = Count,
+    ['Size (GB)'] = SizeGB,
+    ['Estimated Cost (€)'] = round(SizeGB * 5.23, 2)

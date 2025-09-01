@@ -1,0 +1,4 @@
+SentinelHealth
+| where TimeGenerated > ago(7d) 
+| where SentinelResourceType == "Data connector"
+| summarize by SentinelResourceName, Status, SentinelResourceKind

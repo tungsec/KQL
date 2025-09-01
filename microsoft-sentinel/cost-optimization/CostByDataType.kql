@@ -1,0 +1,8 @@
+Usage
+| where IsBillable == true
+| summarize TotalGB = round(sum(Quantity) / 1024, 2) by DataType
+| top 10 by TotalGB desc
+| project
+    ['Data Type'] = DataType,
+    ['Total GB'] = TotalGB,
+    ['Estimated Cost (€)'] = round(TotalGB * 5.23, 2)

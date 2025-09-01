@@ -1,0 +1,8 @@
+AADNonInteractiveUserSignInLogs
+| take 10000
+| evaluate narrow()
+| extend ColumnSizeBytes = estimate_data_size(Value)
+| summarize ColumnSizeBytes = make_list(ColumnSizeBytes) by Column
+| extend series_stats(ColumnSizeBytes)
+| project Column, series_stats_ColumnSizeBytes_avg
+| sort by series_stats_ColumnSizeBytes_avg

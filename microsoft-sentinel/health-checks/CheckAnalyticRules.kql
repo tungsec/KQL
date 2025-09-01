@@ -1,0 +1,6 @@
+SentinelHealth
+| where OperationName has "Analytics rule run" and Status != "Success"
+| mv-expand Issue = iff(array_length(ExtendedProperties["Issues"]) > 0, ExtendedProperties["Issues"], dynamic([""]))
+| extend IssueCode = iff(isempty(Issue), Issue, Issue.Code)
+| extend IssueDescription = iff(isempty(Issue), Issue, Issue.Description)
+| project SentinelResourceName, IssueCode, IssueDescription

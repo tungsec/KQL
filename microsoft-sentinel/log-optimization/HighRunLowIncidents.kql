@@ -1,0 +1,13 @@
+let runs = SentinelHealth 
+    | where TimeGenerated >= ago(30d) and SentinelResourceType == "Analytics Rule" and Status == "Success"
+    | summarize Runs=count() by RuleName = SentinelResourceName;
+let incs = SecurityIncident
+    | where TimeGenerated >= ago(30d)
+    | join kind= fullouter (SecurityAlert) on $left.Title==$right.AlertName
+    | where AlertIds contains SystemAlertId
+    | summarize Incidents=count() by AlertName;
+runs 
+| join kind=leftouter incs on $left.RuleName == $right.AlertName
+| where Runs > 50 and coalesce(Incidents, 0) < 5
+| project RuleName, Runs, Incidents
+| sort by Runs desc
