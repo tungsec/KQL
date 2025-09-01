@@ -1,0 +1,5 @@
+SecurityIncident
+| where TimeGenerated > ago(90d)
+| where ModifiedBy startswith "Automation rule"
+| summarize Count=count() by ModifiedBy
+| sort by Count desc

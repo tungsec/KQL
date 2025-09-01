@@ -1,1 +1,3 @@
-# KQL
+# KQL queries for MSSPs
+
+# Resources

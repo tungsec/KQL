@@ -1,0 +1,3 @@
+BehaviorAnalytics
+| summarize EventSourceCount = count() by EventSource
+| top 5 by EventSourceCount

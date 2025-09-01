@@ -1,0 +1,8 @@
+union withsource=['Table Name'] *
+| summarize Entries = count(), Size = sum(_BilledSize) by ['Table Name']
+| top 10 by Size desc
+| project
+    ['Table Name'],
+    ['Table Entries'] = Entries,
+    ['Table Size'] = Size,
+    ['Size per Entry'] = 1.0 * Size / Entries

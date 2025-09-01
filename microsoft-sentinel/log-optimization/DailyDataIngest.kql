@@ -1,0 +1,4 @@
+Usage
+| summarize TotalVolumeGB = round((sum(Quantity) / 1024), 0) by bin(TimeGenerated, 1d)
+| sort by TimeGenerated asc
+| render columnchart

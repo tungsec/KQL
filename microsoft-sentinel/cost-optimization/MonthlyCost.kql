@@ -1,0 +1,11 @@
+Usage
+| where TimeGenerated > ago(30d)
+| where IsBillable == true 
+| summarize TotalGB = round(sum(Quantity) / 1024, 2)
+| extend ['Daily Average (GB)'] = round(TotalGB / 30, 2)
+| extend ['Monthly Total (GB)'] = TotalGB
+| extend ['Estimated Monthly Cost (€)'] = round(TotalGB * 5.23, 2)
+| project
+    ['Daily Average (GB)'],
+    ['Monthly Total (GB)'],
+    ['Estimated Monthly Cost (€)']
