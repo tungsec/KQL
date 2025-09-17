@@ -1,0 +1,515 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "# ISO 27001 Compliance Monitoring Workbook\n\nThis workbook provides comprehensive monitoring capabilities for ISO 27001 compliance using Azure AD, Office 365, Azure Activity, and other cloud-native data sources.\n\n**Data Sources:** Azure AD Sign-ins, Office 365, Azure Activity, DNS, Threat Intelligence, Azure Security Center\n\n**Last Updated:** {TimeGenerated:local}\n\n---"
+      },
+      "name": "Header"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "timeRange",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 2592000000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2592000000
+                },
+                {
+                  "durationMs": 5184000000
+                },
+                {
+                  "durationMs": 7776000000
+                }
+              ]
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "TimeRangeParameter"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Executive Summary\nHigh-level compliance overview and key metrics"
+      },
+      "name": "ExecutiveSummaryHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let TotalSignIns = SigninLogs\n| where TimeGenerated {TimeRange}\n| count\n| project TotalSignIns = Count;\nlet FailedSignIns = SigninLogs\n| where TimeGenerated {TimeRange}\n| where ResultType != 0\n| count\n| project FailedSignIns = Count;\nlet RiskySignIns = SigninLogs\n| where TimeGenerated {TimeRange}\n| where RiskLevelDuringSignIn in (\"high\", \"medium\")\n| count\n| project RiskySignIns = Count;\nlet PrivilegedAccess = AuditLogs\n| where TimeGenerated {TimeRange}\n| where Category == \"RoleManagement\" or OperationName contains \"role\"\n| count\n| project PrivilegedAccess = Count;\nTotalSignIns\n| extend FailedSignIns = toscalar(FailedSignIns)\n| extend RiskySignIns = toscalar(RiskySignIns)\n| extend PrivilegedAccess = toscalar(PrivilegedAccess)\n| extend ComplianceScore = case(\n    TotalSignIns == 0, 100.0,\n    round((1.0 - (todouble(FailedSignIns + RiskySignIns) / todouble(TotalSignIns))) * 100, 2)\n)\n| project TotalSignIns, FailedSignIns, RiskySignIns, PrivilegedAccess, ComplianceScore\n| evaluate narrow()\n| project Indicator = Column, Value\n",
+        "size": 4,
+        "title": "Compliance Key Performance Indicators",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "tiles",
+        "tileSettings": {
+          "titleContent": {
+            "columnMatch": "Indicator",
+            "formatter": 1
+          },
+          "leftContent": {
+            "columnMatch": "Value",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "auto"
+            },
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "style": "decimal",
+                "maximumFractionDigits": 2,
+                "maximumSignificantDigits": 3
+              }
+            }
+          },
+          "showBorder": true
+        }
+      },
+      "name": "ComplianceKPIs"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Access Controls (A.9)\n\nMonitoring user access management and authentication controls via Azure AD"
+      },
+      "name": "AccessControlsHeader"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SigninLogs\n| where TimeGenerated {TimeRange}\n| summarize SuccessfulSignIns = countif(ResultType == 0), FailedSignIns = countif(ResultType != 0) by bin(TimeGenerated, 1h)\n| render timechart",
+              "size": 0,
+              "title": "Authentication Events Trend",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "AuthenticationTrend"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SigninLogs\n| where TimeGenerated {TimeRange}\n| where ResultType != 0\n| summarize FailedAttempts = count(), UniqueIPs = dcount(IPAddress) by UserPrincipalName\n| where FailedAttempts > 10\n| order by FailedAttempts desc\n| take 20",
+              "size": 0,
+              "title": "Top Failed Sign-in Attempts (Potential Brute Force)",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "FailedSignIns"
+          }
+        ]
+      },
+      "name": "AccessControlsGroup"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AuditLogs\n| where TimeGenerated {TimeRange}\n| where Category in (\"RoleManagement\", \"UserManagement\", \"GroupManagement\")\n| summarize Count = count() by OperationName, Result, Category\n| extend RiskLevel = case(\n    OperationName contains \"Add member to role\" or OperationName contains \"Add owner to application\", \"Critical\",\n    OperationName contains \"Update user\" or OperationName contains \"Add user\", \"Medium\",\n    OperationName contains \"Update application\" or OperationName contains \"Add application\", \"High\",\n    \"Low\"\n)\n| project OperationName, Category, Count, Result, RiskLevel\n| order by Count desc",
+        "size": 0,
+        "title": "Privileged Operations in Azure AD",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "sortBy": [
+            {
+              "itemKey": "RiskLevel",
+              "sortOrder": 1
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "RiskLevel",
+            "sortOrder": 1
+          }
+        ]
+      },
+      "name": "PrivilegedOperations"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Cryptography (A.10)\n\nMonitoring cryptographic controls via TLS usage and certificate events"
+      },
+      "name": "CryptographyHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where TimeGenerated {TimeRange}\n| where isnotempty(AuthenticationProtocol)\n| summarize Count = count() by AuthenticationProtocol, ClientAppUsed\n| extend SecurityRating = case(\n    AuthenticationProtocol contains \"oauth\" or AuthenticationProtocol contains \"saml\", \"Secure\",\n    AuthenticationProtocol contains \"legacy\" or ClientAppUsed in (\"IMAP\", \"POP\", \"SMTP\"), \"Insecure\",\n    \"Medium\"\n)\n| order by Count desc",
+        "size": 0,
+        "title": "Authentication Protocols Usage (Crypto Security Assessment)",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "sortBy": [
+            {
+              "itemKey": "SecurityRating",
+              "sortOrder": 1
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "SecurityRating",
+            "sortOrder": 1
+          }
+        ]
+      },
+      "name": "AuthenticationProtocols"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Physical and Environmental Security (A.11)\n\nMonitoring device compliance and conditional access policies"
+      },
+      "name": "PhysicalSecurityHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where TimeGenerated {TimeRange}\n| where isnotempty(DeviceDetail)\n| summarize Count = count()\n    by\n    tostring(DeviceDetail.operatingSystem),\n    tostring(DeviceDetail.trustType),\n    tostring(DeviceDetail.isCompliant)\n| extend ComplianceStatus = case(\n                                DeviceDetail_isCompliant == 'true',\n                                \"Compliant\",\n                                DeviceDetail_isCompliant == 'false',\n                                \"Non-Compliant\",\n                                \"Unknown\"\n                            )\n| project\n    OperatingSystem = DeviceDetail_operatingSystem,\n    TrustType = DeviceDetail_trustType,\n    ComplianceStatus,\n    Count\n| order by Count desc",
+        "size": 0,
+        "title": "Device Compliance Status",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "sortBy": [
+            {
+              "itemKey": "ComplianceStatus",
+              "sortOrder": 2
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "ComplianceStatus",
+            "sortOrder": 2
+          }
+        ]
+      },
+      "name": "DeviceCompliance"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Operations Security (A.12)\n\nMonitoring Azure resource operations and Office 365 activities"
+      },
+      "name": "OperationsSecurityHeader"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AzureActivity\n| where TimeGenerated {TimeRange}\n| where CategoryValue == \"Administrative\"\n| summarize Count = count() by OperationNameValue, ActivityStatusValue\n| where Count > 5\n| extend RiskLevel = case(\n    OperationNameValue contains \"Delete\" or OperationNameValue contains \"Create\", \"High\",\n    OperationNameValue contains \"Update\" or OperationNameValue contains \"Modify\", \"Medium\",\n    \"Low\"\n)\n| order by Count desc\n| take 20",
+              "size": 0,
+              "title": "Azure Administrative Operations",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "gridSettings": {
+                "sortBy": [
+                  {
+                    "itemKey": "RiskLevel",
+                    "sortOrder": 1
+                  }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "RiskLevel",
+                  "sortOrder": 1
+                }
+              ]
+            },
+            "customWidth": "50",
+            "name": "AzureOperations"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "OfficeActivity\n| where TimeGenerated {TimeRange}\n| where Operation in (\"FileDownloaded\", \"FileUploaded\", \"FileSyncDownloadedFull\", \"FileAccessed\")\n| summarize Count = count() by Operation, UserId\n| where Count > 100  // High volume file operations\n| order by Count desc\n| take 20",
+              "size": 0,
+              "title": "High Volume File Operations (Data Exfiltration Risk)",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "FileOperations"
+          }
+        ]
+      },
+      "name": "OperationsSecurityGroup"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Communications Security (A.13)\n\nMonitoring network communications via DNS logs and external connections"
+      },
+      "name": "CommunicationsSecurityHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "DnsEvents\n| where TimeGenerated {TimeRange}\n| where QueryType == \"A\" or QueryType == \"AAAA\"\n| where Name !endswith \".local\" and Name !endswith \".corp\"\n| summarize RequestCount = count(), UniqueClients = dcount(ClientIP) by Name\n| where RequestCount > 100\n| extend SuspiciousIndicators = case(\n    Name contains \"bit.ly\" or Name contains \"tinyurl\" or Name contains \"t.co\", \"URL Shortener\",\n    Name matches regex @\"\\d+\\.\\d+\\.\\d+\\.\\d+\", \"Direct IP Resolution\",\n    Name contains \"torrent\" or Name contains \"p2p\", \"P2P Traffic\",\n    \"Normal\"\n)\n| where SuspiciousIndicators != \"Normal\"\n| order by RequestCount desc\n| take 20",
+        "size": 0,
+        "title": "Suspicious DNS Queries",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "SuspiciousDNS"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## System Acquisition, Development and Maintenance (A.14)\n\nMonitoring application registrations and Azure resource changes"
+      },
+      "name": "SystemDevelopmentHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AuditLogs\n| where TimeGenerated {TimeRange}\n| where Category == \"ApplicationManagement\"\n| summarize Count = count() by OperationName, Result, tostring(InitiatedBy.user.userPrincipalName)\n| extend RiskLevel = case(\n    OperationName contains \"Add application\" or OperationName contains \"Add service principal\", \"High\",\n    OperationName contains \"Update application\" or OperationName contains \"Add owner\", \"Medium\",\n    \"Low\"\n)\n| project OperationName, InitiatedBy = InitiatedBy_user_userPrincipalName, Count, Result, RiskLevel\n| order by Count desc",
+        "size": 0,
+        "title": "Application Management Activities",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "ApplicationManagement"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Supplier Relationships (A.15)\n\nMonitoring third-party app access and external identity providers"
+      },
+      "name": "SupplierRelationshipsHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where TimeGenerated {TimeRange}\n| where HomeTenantId != ResourceTenantId or isnotempty(CrossTenantAccessType)\n| summarize Count = count(), UniqueApps = dcount(AppDisplayName) by UserPrincipalName, CrossTenantAccessType, HomeTenantId, ResourceTenantId\n| extend AccessType = case(\n    CrossTenantAccessType == \"b2bCollaboration\", \"B2B Guest Access\",\n    CrossTenantAccessType == \"b2bDirectConnect\", \"B2B Direct Connect\",\n    HomeTenantId != ResourceTenantId, \"Cross-Tenant Access\",\n    \"Internal Access\"\n)\n| where AccessType != \"Internal Access\"\n| order by Count desc",
+        "size": 0,
+        "title": "External/Cross-Tenant Access",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "ExternalAccess"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Information Security Incident Management (A.16)\n\nMonitoring security alerts and risky user behavior"
+      },
+      "name": "IncidentManagementHeader"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SecurityAlert\n| where TimeGenerated {TimeRange}\n| summarize Count = count() by AlertSeverity, bin(TimeGenerated, 1d)\n| render columnchart",
+              "size": 0,
+              "title": "Security Alerts by Severity",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "SecurityAlertsSeverity"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "SigninLogs\n| where TimeGenerated {TimeRange}\n| where RiskLevelDuringSignIn in (\"high\", \"medium\")\n| summarize RiskySignIns = count(), UniqueUsers = dcount(UserPrincipalName) by RiskLevelDuringSignIn, bin(TimeGenerated, 1d)\n| render columnchart",
+              "size": 0,
+              "title": "Risky Sign-in Detections",
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "customWidth": "50",
+            "name": "RiskySignIns"
+          }
+        ]
+      },
+      "name": "IncidentManagementGroup"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Information Security Aspects of Business Continuity Management (A.17)\n\nMonitoring Azure backup operations and service health"
+      },
+      "name": "BusinessContinuityHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AzureActivity\n| where TimeGenerated {TimeRange}\n| where ResourceProvider == \"Microsoft.RecoveryServices\"\n| summarize Count = count() by OperationNameValue, ActivityStatusValue, bin(TimeGenerated, 1d)\n| extend Status = case(\n    ActivityStatusValue == \"Succeeded\", \"Success\",\n    ActivityStatusValue in (\"Failed\", \"Cancelled\"), \"Failure\",\n    \"InProgress\"\n)\n| where Status in (\"Success\", \"Failure\")\n| summarize Count = sum(Count) by Status, bin(TimeGenerated, 1d)\n| render columnchart",
+        "size": 0,
+        "title": "Azure Backup Operations Status",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "BackupOperations"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Compliance (A.18)\n\nMonitoring audit log integrity and policy compliance"
+      },
+      "name": "ComplianceHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AuditLogs\n| where TimeGenerated {TimeRange}\n| where Category == \"Policy\" or OperationName contains \"policy\"\n| summarize Count = count() by OperationName, Result, Category\n| extend ComplianceImpact = case(\n    OperationName contains \"conditional access\" or OperationName contains \"Conditional Access\", \"Critical\",\n    OperationName contains \"Update policy\" or OperationName contains \"Delete policy\", \"High\",\n    OperationName contains \"Create policy\", \"Medium\",\n    \"Low\"\n)\n| project OperationName, Category, Count, Result, ComplianceImpact\n| order by Count desc",
+        "size": 0,
+        "title": "Policy Configuration Changes (Compliance Risk Events)",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "sortBy": [
+            {
+              "itemKey": "ComplianceImpact",
+              "sortOrder": 1
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "ComplianceImpact",
+            "sortOrder": 1
+          }
+        ]
+      },
+      "name": "PolicyChanges"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Cloud Security Posture (Additional)\n\nMonitoring Microsoft Defender for Cloud recommendations"
+      },
+      "name": "CloudSecurityHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SecurityRecommendation\n| where TimeGenerated {TimeRange}\n| summarize Count = count() by RecommendationSeverity, RecommendationState\n| extend SeverityScore = case(\n    RecommendationSeverity == \"High\", 3,\n    RecommendationSeverity == \"Medium\", 2,\n    RecommendationSeverity == \"Low\", 1,\n    0\n)\n| project RecommendationSeverity, RecommendationState, Count, SeverityScore\n| order by SeverityScore desc, Count desc",
+        "size": 0,
+        "title": "Security Recommendations by Severity",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "SecurityRecommendations"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Compliance Dashboard Summary\n\nOverall compliance posture and trending using cloud-native data sources"
+      },
+      "name": "ComplianceSummaryHeader"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let ControlAreas = datatable(ControlArea:string, Weight:double)\n[\n    \"Access Controls\", 0.25,\n    \"Operations Security\", 0.20,\n    \"Communications Security\", 0.15,\n    \"Incident Management\", 0.15,\n    \"System Development\", 0.10,\n    \"Supplier Management\", 0.10,\n    \"Compliance Monitoring\", 0.05\n];\nlet AccessScore = SigninLogs\n| where TimeGenerated {TimeRange}\n| summarize Total = count(), Failed = countif(ResultType != 0)\n| extend Score = case(Total == 0, 100.0, round((1.0 - (todouble(Failed) / todouble(Total))) * 100, 2))\n| project Score;\nlet OpsScore = AzureActivity\n| where TimeGenerated {TimeRange}\n| where CategoryValue == \"Administrative\"\n| summarize Total = count(), Failed = countif(ActivityStatusValue == \"Failed\")\n| extend Score = case(Total == 0, 100.0, round((1.0 - (todouble(Failed) / todouble(Total))) * 100, 2))\n| project Score;\nlet CommScore = DnsEvents\n| where TimeGenerated {TimeRange}\n| summarize Total = count(), Suspicious = countif(Name contains \"bit.ly\" or Name contains \"tinyurl\")\n| extend Score = case(Total == 0, 100.0, round((1.0 - (todouble(Suspicious) / todouble(Total))) * 100, 2))\n| project Score;\nlet IncidentScore = SecurityAlert\n| where TimeGenerated {TimeRange}\n| summarize Total = count(), Critical = countif(AlertSeverity == \"High\")\n| extend Score = case(Total == 0, 100.0, round((1.0 - (todouble(Critical) / todouble(Total))) * 100, 2))\n| project Score;\nlet SysDevScore = AuditLogs\n| where TimeGenerated {TimeRange}\n| where Category == \"ApplicationManagement\"\n| summarize Total = count(), Risky = countif(OperationName contains \"Add application\")\n| extend Score = case(Total == 0, 100.0, round((1.0 - (todouble(Risky) / todouble(Total))) * 100, 2))\n| project Score;\nlet SupplierScore = SigninLogs\n| where TimeGenerated {TimeRange}\n| summarize Total = count(), External = countif(HomeTenantId != ResourceTenantId)\n| extend Score = case(Total == 0, 100.0, round((todouble(External) / todouble(Total)) * 50 + 50, 2))  // Normalize external access\n| project Score;\nlet ComplianceScore = AuditLogs\n| where TimeGenerated {TimeRange}\n| where Category == \"Policy\"\n| summarize Total = count(), Changes = countif(OperationName contains \"Update policy\" or OperationName contains \"Delete policy\")\n| extend Score = case(Total == 0, 100.0, round((1.0 - (todouble(Changes) / todouble(Total))) * 100, 2))\n| project Score;\nControlAreas\n| extend ActualScore = case(\n    ControlArea == \"Access Controls\", toscalar(AccessScore),\n    ControlArea == \"Operations Security\", toscalar(OpsScore),\n    ControlArea == \"Communications Security\", toscalar(CommScore),\n    ControlArea == \"Incident Management\", toscalar(IncidentScore),\n    ControlArea == \"System Development\", toscalar(SysDevScore),\n    ControlArea == \"Supplier Management\", toscalar(SupplierScore),\n    ControlArea == \"Compliance Monitoring\", toscalar(ComplianceScore),\n    0.0\n)\n| extend WeightedScore = ActualScore * Weight\n| project ControlArea, ActualScore, Weight, WeightedScore",
+        "size": 0,
+        "title": "ISO 27001 Control Areas Compliance Score (Cloud-Native Sources)",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "ComplianceScorecard"
+    }
+  ],
+  "fallbackResourceIds": [],
+  "fromTemplateId": "sentinel-UserWorkbook",
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
